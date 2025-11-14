@@ -1,6 +1,6 @@
 module Main where
 
-import Control.Exception (IOException, catch)
+import Control.Exception (IOException, catch, evaluate)
 import qualified Data.Map as Map
 import Data.Time.Clock (getCurrentTime)
 import InventoryData
@@ -135,6 +135,7 @@ carregarInventario =
   catch
     ( do
         content <- readFile "Inventario.dat"
+        _ <- evaluate (length content)  -- Force strict evaluation
         let items = read content :: [Item]
         let inv = Map.fromList [(itemID it, it) | it <- items]
         return inv
@@ -150,6 +151,7 @@ carregarLog =
   catch
     ( do
         content <- readFile "Auditoria.log"
+        _ <- evaluate (length content)  -- Force strict evaluation
         let ls = lines content
         let entries = [read line :: LogEntry | line <- ls]
         return entries
